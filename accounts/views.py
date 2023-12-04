@@ -1,8 +1,9 @@
+from django.contrib.auth import get_user_model
+from django.http import Http404
 from rest_framework.viewsets import GenericViewSet
 from rest_framework import mixins
 from rest_framework.response import Response
 from rest_framework.decorators import action
-from django.contrib.auth import get_user_model
 from rest_framework.views import APIView
 from rest_framework import status
 from rest_framework.permissions import IsAuthenticated
@@ -32,7 +33,9 @@ class UserViewset(GenericViewSet, mixins.CreateModelMixin, mixins.RetrieveModelM
         return User.objects.filter(user=self.request.user)
 
     def get_object(self):
-        return self.request.user
+        if self.request.user.is_authenticated:
+            return self.request.user
+        raise Http404
 
     def list(self, *args, **kwargs):
         return self.retrieve(*args, **kwargs)
