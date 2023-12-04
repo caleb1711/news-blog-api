@@ -1,0 +1,1 @@
+web: python manage.py migrate --no-input && mkdir logs && gunicorn core.wsgi:application --access-logfile ./logs/access.log --error-logfile ./logs/error.log --timeout 200
