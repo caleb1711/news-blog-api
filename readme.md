@@ -13,8 +13,8 @@ This API provides functionality for managing a news blog platform with user auth
 
 ### User Permissions
 
-- **User Roles:** Differentiate between regular users and admin users.
-- **Authorization:** Users can only edit/delete their own blogs/comments.
+- **User Roles:** User will be author.
+- **Authorization:** Users can only create, edit, read, update their own blogs/comments and also leave the comments on other users blogs and also like the comment.
 
 ### Blog Management
 
@@ -54,12 +54,15 @@ This API provides functionality for managing a news blog platform with user auth
 - `/api/blog/`: POST request to create a new blog.
 - `/api/blog/:id/`: PATCH request to edit a specific blog.
 - `/api/blog/:id/`: DELETE request to delete a specific blog.
-- `/api/blogs/:id/comments/`: GET request to retrieve comments for a specific blog.
-- `/api/blog/public/:id/comments/`: POST request to add a comment to a specific blog.
+- `/api/blog/`: GET request to retrieve a specific user blog.
+- `/api/blogs/:id/comment/`: GET request to retrieve comments for a specific blog.
+- `/api/blog/public/:id/comment/`: POST request to add a comment to a specific blog.
+- `/api/blog/categories/`: GET request to fetch all the categories.
+
 
 ### Search Endpoints
 
-- `/api/search/?search=search_query`: GET request to search blogs.
+- `/api/blog/public/?search=search_query`: GET request to search blogs.
 
 ## Tech Stack
 
@@ -70,7 +73,7 @@ This API provides functionality for managing a news blog platform with user auth
 
 ## Setup and Installation
 
-1. Clone the repository.
+1. Clone the repository (`https://github.com/caleb1711/news-blog-api`).
 2. Install dependencies (`pip install -r requirements.txt`).
 3. Configure database settings in `settings.py`.
 4. Run migrations (`python manage.py makemigrations` and `python manage.py migrate`).
