@@ -24,7 +24,7 @@ DEBUG = env("DEBUG")
 
 ALLOWED_HOSTS = env("ALLOWED_HOSTS", default=[])
 
-FRONT_END_URL = "http://localhost:3000"
+FRONT_END_URL = "https://news-blog-react-ecf5d560f23f.herokuapp.com"
 
 
 AUTH_USER_MODEL = "accounts.User"
@@ -158,7 +158,8 @@ SIMPLE_JWT = {
     "AUTH_TOKEN_CLASSES": ("rest_framework_simplejwt.tokens.SlidingToken",),
 }
 CORS_ALLOWED_ORIGINS = [
-    "http://localhost:3000",  
+    "http://localhost:3000",
+    "https://news-blog-react-ecf5d560f23f.herokuapp.com",  
 ]   #...f
 
 # Reset Password Token Time 
