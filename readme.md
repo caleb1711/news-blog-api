@@ -88,6 +88,12 @@ This API provides functionality for managing a news blog platform with user auth
 
 Feel free to contribute by submitting pull requests, reporting issues, or suggesting improvements.
 
+
+
+## Authors 
+
+Calkra15@outlook.com
+
 ## Acknowledgments
 
 ### Frameworks and Libraries
@@ -102,21 +108,12 @@ Feel free to contribute by submitting pull requests, reporting issues, or sugges
 - [SMTP Library](https://docs.python.org/3/library/smtplib.html) 
 
 
-
 ### Technologies
 - Python
 - Django
 - RESTful API principles
 
 
-
-## Authors 
-
-Calkra15@outlook.com
-
-## Acknowledgments
-
-- Credit any resources, libraries, or individuals you'd like to acknowledge.
 
 ## Contact
 
