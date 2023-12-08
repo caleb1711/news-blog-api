@@ -88,6 +88,28 @@ This API provides functionality for managing a news blog platform with user auth
 
 Feel free to contribute by submitting pull requests, reporting issues, or suggesting improvements.
 
+## Acknowledgments
+
+### Frameworks and Libraries
+- [Django](https://www.djangoproject.com/)
+- [Django Rest Framework](https://www.django-rest-framework.org/)
+- [Python](https://www.python.org/)
+
+### Tools and Packages
+- [Requests](https://docs.python-requests.org/en/latest/) useing this only for testing purpose
+
+### Email Sending
+- [SMTP Library](https://docs.python.org/3/library/smtplib.html) 
+
+
+
+### Technologies
+- Python
+- Django
+- RESTful API principles
+
+
+
 ## Authors 
 
 Calkra15@outlook.com
