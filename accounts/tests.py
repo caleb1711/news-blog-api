@@ -3,6 +3,8 @@ from django.contrib.auth import get_user_model
 from rest_framework.test import APITestCase
 from rest_framework.test import APIClient
 from rest_framework import status
+from unittest.mock import patch
+
 
 User = get_user_model()
 
@@ -39,7 +41,7 @@ class UserCreationEndpointTestCase(TestCase):
 
 
 
-
+# Test Change Password Functionality
 class ChangePasswordAPITestCase(APITestCase):
     def setUp(self):
         self.user = User.objects.create_user(email='test_user@example.com', password='test_password')
@@ -71,3 +73,27 @@ class ChangePasswordAPITestCase(APITestCase):
         response = self.client.post(url, data, format='json')
         
         self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
+
+# Test Forgot Password Feature
+        
+class ForgotPasswordTestCase(TestCase):
+    def setUp(self):
+        self.client = APIClient()
+        self.valid_email = "test@example.com"
+        self.invalid_email = "invalid_email@example.com"
+
+    @patch('accounts.emails.send_email')
+    def test_forgot_password_valid_email(self, mock_send_email):
+        response = self.client.post('/api/accounts/user/forget_password/', {"email": self.valid_email}, format='json')
+        
+        # Check if the response status code is HTTP_400_BAD_REQUEST
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+
+        # Ensure that no email sending function was called
+        mock_send_email.assert_not_called()
+
+    def test_forgot_password_invalid_email(self):
+        response = self.client.post('/api/accounts/user/forget_password/', {"email": self.invalid_email}, format='json')
+        
+        # Check if the response status code is HTTP_400_BAD_REQUEST
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
