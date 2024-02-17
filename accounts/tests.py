@@ -86,14 +86,11 @@ class ForgotPasswordTestCase(TestCase):
     def test_forgot_password_valid_email(self, mock_send_email):
         response = self.client.post('/api/accounts/user/forget_password/', {"email": self.valid_email}, format='json')
         
-        # Check if the response status code is HTTP_400_BAD_REQUEST
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
 
-        # Ensure that no email sending function was called
         mock_send_email.assert_not_called()
 
     def test_forgot_password_invalid_email(self):
         response = self.client.post('/api/accounts/user/forget_password/', {"email": self.invalid_email}, format='json')
         
-        # Check if the response status code is HTTP_400_BAD_REQUEST
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
