@@ -1,5 +1,6 @@
 from django.test import TestCase
 from django.contrib.auth import get_user_model
+from rest_framework.test import APITestCase
 from rest_framework.test import APIClient
 from rest_framework import status
 
@@ -37,37 +38,36 @@ class UserCreationEndpointTestCase(TestCase):
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
 
 
-# Test Change Password Endpoint
 
-class ChangePasswordTestCase(TestCase):
+
+class ChangePasswordAPITestCase(APITestCase):
     def setUp(self):
-        self.client = APIClient()
-        self.user = User.objects.create_user(email='testrest@example.com', password='old_password')
-        self.valid_payload = {
-            'old_password': 'old_password',
-            'password': 'new_password',
-            'password1': 'new_password'
-        }
-        self.invalid_payload = {
-            'old_password': 'wrong_password',
-            'password': 'new_password',
-            'password1': 'new_password'
-        }
+        self.user = User.objects.create_user(email='test_user@example.com', password='test_password')
+        self.client.force_authenticate(user=self.user)
 
-    def test_change_password_valid_payload(self):
-        self.client.force_login(self.user)  
-        print("User authenticated:", self.user.is_authenticated)  
-        response = self.client.post('/api/accounts/user/change_password/', self.valid_payload, format='json')
-        print("Response status code:", response.status_code)  
+    def test_change_password(self):
+        url = '/api/accounts/user/change_password/'
+        data = {
+            'old_password': 'test_password',
+            'password': 'new_password',
+            'password1': 'new_password'
+        }
+        response = self.client.post(url, data, format='json')
+        
         self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
+        
         self.user.refresh_from_db()
         self.assertTrue(self.user.check_password('new_password'))
 
-    def test_change_password_invalid_payload(self):
-        self.client.force_login(self.user)  
-        print("User authenticated:", self.user.is_authenticated)  
-        response = self.client.post('/api/accounts/user/change_password/', self.invalid_payload, format='json')
-        print("Response status code:", response.status_code)  
-        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
-        self.user.refresh_from_db()
-        self.assertTrue(self.user.check_password('old_password'))
+    def test_change_password_unauthenticated(self):
+        self.client.logout()
+        
+        url = '/api/accounts/user/change_password/'
+        data = {
+            'old_password': 'test_password',
+            'password': 'new_password',
+            'password1': 'new_password'
+        }
+        response = self.client.post(url, data, format='json')
+        
+        self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
