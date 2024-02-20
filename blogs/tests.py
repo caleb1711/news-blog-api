@@ -4,7 +4,7 @@ from rest_framework.test import APITestCase
 from rest_framework import status
 from accounts.models import User
 from .models import Blog, Category
-
+from .serializers import CategorySerializer
 
 
 
@@ -180,3 +180,27 @@ class CommentActionAPITestCase(APITestCase):
         self.assertEqual(response.data['content'], 'Test comment')
         self.assertEqual(response.data['user']['email'], self.user.email) 
         self.assertEqual(response.data['blog'], self.blog.pk)
+
+
+# Test Cases for Category Viewset 
+class CategoryViewsetTestCase(APITestCase):
+    def setUp(self):
+        self.category1 = Category.objects.create(name="Category 1")
+        self.category2 = Category.objects.create(name="Category 2")
+
+    def test_list_categories(self):
+        url = '/api/blog/categories/'
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+        categories = Category.objects.all()
+        serializer = CategorySerializer(categories, many=True)
+        self.assertEqual(response.data, serializer.data)
+
+    def test_retrieve_category(self):
+        url = f'/api/blog/categories/{self.category1.pk}/'
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+        serializer = CategorySerializer(self.category1)
+        self.assertEqual(response.data, serializer.data)
