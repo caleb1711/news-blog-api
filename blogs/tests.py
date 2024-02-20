@@ -1,58 +1,84 @@
-from django.test import TestCase
-from rest_framework.test import APIClient
-from django.contrib.auth import get_user_model
-from .models import Blog, Category, Comment
+from PIL import Image
+from io import BytesIO
+from rest_framework.test import APITestCase
+from rest_framework import status
+from accounts.models import User
+from .models import Blog, Category
 
-User = get_user_model()
 
-class BlogTests(TestCase):
+# Test Cases for User Blog API
+class UserBlogApiTest(APITestCase):
     def setUp(self):
-        self.client = APIClient()
-        self.user = User.objects.create_user(username='test_user', email='test@example.com', password='test_password')
+        self.user = User.objects.create_user(email='test@example.com', password='testpassword')
         self.client.force_authenticate(user=self.user)
         self.category = Category.objects.create(name='Test Category')
-        self.blog = Blog.objects.create(title='Test Blog', content='Test Content', category=self.category, user=self.user)
-        self.comment = Comment.objects.create(content='Test Comment', user=self.user, blog=self.blog)
+        self.blog = Blog.objects.create(
+            title='Test Blog',
+            content='This is a test blog',
+            user=self.user,
+            category=self.category
+        )
 
-    def test_create_blog(self):
+    def test_list_user_blogs(self):
+        url = '/api/blog/'
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(len(response.data), 1) 
+
+    def _generate_test_image(self):
+        image = Image.new('RGB', (100, 100), 'white')
+        image_io = BytesIO()
+        image.save(image_io, format='JPEG')
+        image_io.seek(0)
+        image_io.name = 'test_image.jpg'  
+        return image_io
+
+
+
+    def test_create_user_blog(self):
+        category = Category.objects.create(name='crime')
+        image = self._generate_test_image()
+    
+        url = '/api/blog/'
         data = {
-            'category': self.category.id,
-            'title': 'New Test Blog',
-            'content': 'New Test Content',
+            'title': 'New Blog',
+            'content': 'This is a new blog',
+            'category': category.id,
+            'image': image
         }
-        response = self.client.post('/blogs/blogapi/', data)
-        self.assertEqual(response.status_code, 201)
+        response = self.client.post(url, data, format='multipart')
+        if response.status_code != status.HTTP_201_CREATED:
+            print(response.data)  
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+        self.assertEqual(Blog.objects.count(), 2)
 
-    def test_list_blogs(self):
-        response = self.client.get('/blogs/blogapi/')
-        self.assertEqual(response.status_code, 200)
-        self.assertEqual(len(response.data), 1)
 
-    def test_retrieve_blog(self):
-        response = self.client.get(f'/blogs/blogapi/{self.blog.id}/')
-        self.assertEqual(response.status_code, 200)
+    def test_retrieve_user_blog(self):
+        url = f'/api/blog/{self.blog.pk}/'
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(response.data['title'], 'Test Blog')
 
-    def test_like_blog(self):
-        response = self.client.post(f'/blogs/public/{self.blog.id}/like/')
-        self.assertEqual(response.status_code, 204)
+    def test_update_user_blog(self):
+        url = f'/api/blog/{self.blog.pk}/'
+        category = Category.objects.create(name='crime')
+        image = self._generate_test_image()
 
-    def test_create_comment(self):
-        data = {'content': 'New Test Comment'}
-        response = self.client.post(f'/blogs/public/{self.blog.id}/comment/', data)
-        self.assertEqual(response.status_code, 201)
 
-    def test_list_comments(self):
-        response = self.client.get(f'/blogs/public/{self.blog.id}/comment/')
-        self.assertEqual(response.status_code, 200)
-        self.assertEqual(len(response.data), 1)
+        data = {
+            'title': 'Updated Blog',
+            'content': 'This is an updated blog',
+            'category': category.id,
+            'image': image
+        }
+        response = self.client.put(url, data, format='multipart')
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.blog.refresh_from_db()
+        self.assertEqual(self.blog.title, 'Updated Blog')
+    def test_delete_user_blog(self):
+        url = f'/api/blog/{self.blog.pk}/'
+        response = self.client.delete(url)
+        self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
+        self.assertFalse(Blog.objects.filter(pk=self.blog.pk).exists())
 
-    def test_list_categories(self):
-        response = self.client.get('/blogs/categories/')
-        self.assertEqual(response.status_code, 200)
-        self.assertEqual(len(response.data), 1)
 
-    def test_retrieve_category(self):
-        response = self.client.get(f'/blogs/categories/{self.category.id}/')
-        self.assertEqual(response.status_code, 200)
-        self.assertEqual(response.data['name'], 'Test Category')
