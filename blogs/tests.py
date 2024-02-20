@@ -6,6 +6,8 @@ from accounts.models import User
 from .models import Blog, Category
 
 
+
+
 # Test Cases for User Blog API
 class UserBlogApiTest(APITestCase):
     def setUp(self):
@@ -149,4 +151,32 @@ class LikeActionAPITestCase(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
         self.assertTrue(self.user not in self.blog.likes.all()) 
 
-        
+
+# Test Cases for Comment Action Endpoint
+
+class CommentActionAPITestCase(APITestCase):
+    def setUp(self):
+        self.user = User.objects.create_user(email='test@example.com', password='testpassword')
+        self.client.force_authenticate(user=self.user)
+        self.category = Category.objects.create(name='NewCategory')
+        self.blog = Blog.objects.create(
+            title='Test Blog for Comment',
+            content='This is a test blog for comment',
+            user=self.user,
+            category=self.category
+        )
+    def test_comment_unauthenticated(self):
+        self.client.force_authenticate(user=None)
+        url = f'/api/blog/public/{self.blog.pk}/comment/'
+        data = {'text': 'Test comment'}
+        response = self.client.post(url, data)
+        self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
+    def test_comment_authenticated(self):
+        self.client.force_authenticate(user=self.user)
+        url = f'/api/blog/public/{self.blog.pk}/comment/'
+        data = {'content': 'Test comment', 'blog': self.blog.pk}
+        response = self.client.post(url, data)
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+        self.assertEqual(response.data['content'], 'Test comment')
+        self.assertEqual(response.data['user']['email'], self.user.email) 
+        self.assertEqual(response.data['blog'], self.blog.pk)
