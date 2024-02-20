@@ -91,3 +91,42 @@ class ForgotPasswordTestCase(TestCase):
         response = self.client.post('/api/accounts/user/forget_password/', {"email": self.invalid_email}, format='json')
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
 
+# Test Reset Password Endpoint
+
+
+class TestResetPasswordEndpoint(APITestCase):
+    def setUp(self):
+        self.client = APIClient()
+        self.user = User.objects.create_user(email='test@example.com', password='test_password')
+        self.uid = urlsafe_base64_encode(str(self.user.pk).encode())
+        self.token = 'test_token'
+        self.reset_password_url = f'/api/accounts/reset/{self.uid}/{self.token}/'
+
+    def test_reset_password_endpoint_success(self):
+        print('success endpoints')
+        new_password = 'new_test_password'
+        data = {'password': new_password, 'password1': new_password}
+        print("Reset Password URL:", self.reset_password_url)
+        print("Request Data:", data)
+        response = self.client.post(self.reset_password_url, data, format='json')
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(response.data['msg'], 'Password Changed Successfully')
+        self.user.refresh_from_db()
+        self.assertTrue(self.user.check_password(new_password))
+
+    def test_reset_password_endpoint_invalid_token(self):
+        invalid_token = 'invalid_token'
+        new_password = 'new_test_password'
+        data = {'password': new_password, 'password1': new_password}
+        invalid_reset_password_url = f'/api/accounts/reset/{self.uid}/{invalid_token}/'
+        response = self.client.post(invalid_reset_password_url, data, format='json')
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+
+    def test_reset_password_endpoint_invalid_user(self):
+        invalid_user = User.objects.create_user(email='invalid@example.com', password='test_password', id=123456789)
+        invalid_uid = urlsafe_base64_encode(str(invalid_user.pk).encode())
+        invalid_reset_password_url = f'/api/accounts/reset/{invalid_uid}/{self.token}/'
+        new_password = 'new_test_password'
+        data = {'password': new_password, 'password1': new_password}
+        response = self.client.post(invalid_reset_password_url, data, format='json')
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
