@@ -113,3 +113,40 @@ class PublicBlogAPITestCase(APITestCase):
         url = f'/api/blog/public/?search={category_name}'
         response = self.client.get(url)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+
+# Test Cases for Like Action Endpoint
+
+class LikeActionAPITestCase(APITestCase):
+    def setUp(self):
+        self.user = User.objects.create_user(email='test@example.com', password='testpassword')
+        self.client.force_authenticate(user=self.user)
+        self.category = Category.objects.create(name='NewCategory')
+        self.blog = Blog.objects.create(
+            title='Test Blog for Like',
+            content='This is a test blog for like',
+            user=self.user,
+            category=self.category
+        )
+    def test_like_unauthenticated(self):
+        self.client.force_authenticate(user=None)
+        url = f'/api/blog/public/{self.blog.pk}/like/'
+        response = self.client.post(url)
+        self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
+
+    def test_like_authenticated(self):
+        self.client.force_authenticate(user=self.user)
+        url = f'/api/blog/public/{self.blog.pk}/like/'
+        response = self.client.post(url)
+        self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
+        self.assertTrue(self.user in self.blog.likes.all()) 
+
+    def test_unlike_authenticated(self):
+        self.blog.likes.add(self.user)
+        self.client.force_authenticate(user=self.user)
+        url = f'/api/blog/public/{self.blog.pk}/like/'
+        response = self.client.post(url)
+        self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
+        self.assertTrue(self.user not in self.blog.likes.all()) 
+
+        
