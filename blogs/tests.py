@@ -96,25 +96,25 @@ class PublicBlogAPITestCase(APITestCase):
         blog = Blog.objects.first() 
         if blog:
             title = blog.title
-        url = f'/api/blog/public/?search={title}'
-        response = self.client.get(url)
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
+            url = f'/api/blog/public/?search={title}'
+            response = self.client.get(url)
+            self.assertEqual(response.status_code, status.HTTP_200_OK)
 
     def test_search_by_content(self):
         blog = Blog.objects.first() 
         if blog:
             content = blog.content
-        url = f'/api/blog/public/?search={content}'
-        response = self.client.get(url)
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
+            url = f'/api/blog/public/?search={content}'
+            response = self.client.get(url)
+            self.assertEqual(response.status_code, status.HTTP_200_OK)
 
     def test_search_by_category_name(self):
         blog = Blog.objects.first() 
         if blog:
             category_name = blog.category.name
-        url = f'/api/blog/public/?search={category_name}'
-        response = self.client.get(url)
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
+            url = f'/api/blog/public/?search={category_name}'
+            response = self.client.get(url)
+            self.assertEqual(response.status_code, status.HTTP_200_OK)
 
 
 # Test Cases for Like Action Endpoint
