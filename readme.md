@@ -71,6 +71,175 @@ This API provides functionality for managing a news blog platform with user auth
 - **Database:**  SqlLite.
 - **Authentication:** JWT.
 
+
+# Model Structure
+
+## User Model
+The `User` model extends Django's `AbstractUser` class and represents users in the system.
+
+- **Fields:**
+  - `email`: Email address of the user. (Unique)
+  - `forget_password_token`: Token for resetting the user's password. (Optional)
+  - `email_token`: Token for email verification. (Optional)
+
+- **Methods:**
+  - `__str__()`: Returns the email address of the user.
+
+## Category Model
+The `Category` model represents categories for blogs.
+
+- **Fields:**
+  - `name`: Name of the category.
+  - `created_at`: Date and time when the category was created.
+  - `updated_at`: Date and time when the category was last updated.
+
+- **Methods:**
+  - `__str__()`: Returns the name of the category or a default string if the name is empty.
+
+## Blog Model
+The `Blog` model represents individual blog posts.
+
+- **Fields:**
+  - `category`: Foreign key to the `Category` model representing the category of the blog.
+  - `user`: Foreign key to the `User` model representing the owner of the blog.
+  - `image`: Image associated with the blog.
+  - `title`: Title of the blog.
+  - `content`: Content of the blog.
+  - `likes`: Many-to-many relationship with users representing users who liked the blog.
+  - `created_at`: Date and time when the blog was created.
+  - `updated_at`: Date and time when the blog was last updated.
+
+- **Methods:**
+  - `__str__()`: Returns the title of the blog or a default string if the title is empty.
+
+## Comment Model
+The `Comment` model represents comments on blog posts.
+
+- **Fields:**
+  - `user`: Foreign key to the `User` model representing the user who posted the comment.
+  - `blog`: Foreign key to the `Blog` model representing the blog the comment belongs to.
+  - `content`: Content of the comment.
+  - `created_at`: Date and time when the comment was created.
+  - `updated_at`: Date and time when the comment was last updated.
+
+- **Methods:**
+  - `__str__()`: Returns the content of the comment or a default string if the content is empty.
+
+
+
+## Continuous Integration and Testing
+
+- The project follows best practices for continuous integration and testing to ensure code quality and reliability. Key points in this process include:
+
+### Automated Testing
+
+
+1. **Directory Structure:**
+   - Organize your tests within the `tests` directory in your Django app.
+
+### Test Classes
+
+2. **Use Django's `TestCase`:**
+   - Utilize Django's `TestCase` class for  test classes.
+
+### Descriptive Naming
+
+3. **Naming Conventions:**
+   - Choose descriptive names for your test classes and methods. Follow a naming convention such as `TestAddBlog`.
+
+### Test Fixtures
+
+4. **Fixture Setup:**
+   - Create necessary fixtures or use Django's `setUp` method to set up test data.
+
+### Use Appropriate Assertions
+
+5. **Django TestCase Assertions:**
+   - When writing tests for  Django application, utilize assertions provided by the Django `TestCase` class. Common assertions include:
+     - `assertEqual(a, b)`: Check if `a` and `b` are equal.
+     - `assertNotEqual(a, b)`: Check if `a` and `b` are not equal.
+     - `assertTrue(x)`: Check if `x` is `True`.
+     - `assertFalse(x)`: Check if `x` is `False`.
+     - `assertRaises(exception, callable, *args, **kwargs)`: Check if calling `callable(*args, **kwargs)` raises the specified exception.
+     - ... and more.
+
+   - Refer to the [Django TestCase documentation](https://docs.djangoproject.com/en/stable/topics/testing/tools/#django.test.TestCase) for a comprehensive list of assertions available.
+
+   - Example:
+     ```python
+     from django.test import TestCase
+
+     class YourTestCase(TestCase):
+         def test_example(self):
+             value = 42
+             self.assertEqual(value, 42, "The value should be 42")
+           
+
+### Comprehensive Coverage
+
+6. **Cover Critical Paths:**
+   - Aim for comprehensive test coverage, ensuring that critical code paths are tested thoroughly.
+
+### Isolation
+
+7. **Test Isolation:**
+   - Ensure each test is isolated and does not depend on the state left behind by other tests.
+
+## Running Tests
+
+To run tests for the blog institute Django application, execute the following command:
+
+```bash
+python manage.py test accounts
+python manage.py test blog
+
+
+
+## DEPLOYMENT
+
+This section provides step-by-step instructions on how to deploy the Blogs Institute Django application on Heroku. 
+
+### Prerequisites
+
+Before you begin, make sure you have the following:
+
+- A [Heroku account](https://signup.heroku.com/) .
+- [Git](https://git-scm.com/) installed on your local machine.
+- The [Heroku CLI](https://devcenter.heroku.com/articles/heroku-cli) installed.
+
+### Deployment Steps
+
+1. **Clone the Repository:**
+
+   ```bash
+   git clone https://github.com/caleb1711/news-blog-api.git
+   cd news-blog-api
+
+   heroku create news-blog-api
+
+   heroku config:set SECRET_KEY='your_secret_key'
+   heroku config:set DEBUG=False
+   heroku config:set ALLOWED_HOSTS=*
+   heroku config:set EMAIL_BACKEND=django.core.mail.backends.smtp.EmailBackend
+   heroku config:set EMAIL_HOST=smtp.gmail.com
+   heroku config:set EMAIL_PORT=port
+   heroku config:set EMAIL_USE_TLS=True
+   heroku config:set EMAIL_USE_SSL=False 
+   heroku config:set EMAIL_HOST_USER=hostemsail  
+   heroku config:set EMAIL_HOST_PASSWORD=password
+   heroku config:set DEFAULT_FROM_EMAIL=Blog Institute <email>
+
+   git push heroku main
+
+   heroku run python manage.py migrate
+
+   heroku run python manage.py createsuperuser
+
+   heroku open
+
+- Make sure to set the ALLOWED_HOSTS environment variable on Heroku to the domain name of your app.
+- I also enable the the automatic deployments with main branch.
+
 ## Setup and Installation
 
 1. Clone the repository (`https://github.com/caleb1711/news-blog-api`).
