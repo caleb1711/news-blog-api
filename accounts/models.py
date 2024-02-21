@@ -9,14 +9,6 @@ class User(AbstractUser):
     username= None
     email = models.EmailField(unique=True)
     forget_password_token= models.CharField(max_length=255,  null=True , blank=True)
-    phone_number = models.CharField(
-        verbose_name='Phone Number',
-        help_text='Enter your phone number in international format (e.g., +1234567890).',
-        null=True,
-        blank=True,
-        max_length=50
-    )
-    followers = models.ManyToManyField("self", blank=True)
 
     email_token = models.CharField(max_length=200, null=True, blank=True)
     

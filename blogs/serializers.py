@@ -13,7 +13,7 @@ class BlogOwnerSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = User
-        fields = ["email", "followers"]
+        fields = ["email"]
 
 
 class CommentSerializer(serializers.ModelSerializer):
