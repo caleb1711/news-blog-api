@@ -64,6 +64,198 @@ This API provides functionality for managing a news blog platform with user auth
 
 - `/api/blog/public/?search=search_query`: GET request to search blogs.
 
+## API Endpoints Documentation
+### Accounts App
+ #### 1. User Registration
+- **URL:** /api/accounts/user/
+- **Method:** POST
+- **Description:** Register a new user.
+- **Request Body:**
+```json
+    {
+        "first_name": "john",
+        "last_name": "Deo",
+        "email": "test@example.com",
+        "password": "test_password"
+    }
+```
+#### 2. User Login
+- **URL:** /api/accounts/login/
+- **Method:** POST
+- **Description:** Register a new user.
+- **Request Body:**
+```json
+    {
+        "email": "test@example.com",
+        "password": "test_password"
+    }
+```
+#### 3. Change Password
+
+-   **URL:** /api/accounts/user/change_password/
+-   **Method:** POST
+-   **Description:** Change user password.
+-   **Authentication:** Required
+-   **Request Body:**
+```json
+    {
+        "old_password": "current_password",
+        "password": "new_password",
+        "password1": "new_password"
+    }
+```
+
+
+#### 4. Forgot Password
+
+-   **URL:** /api/accounts/user/forget_password/
+-   **Method:** POST
+-   **Description:** Send reset password email to user.
+-   **Request Body:**
+```json
+    {
+        "email": "user_email@example.com"
+    }
+```
+
+ #### 5. Reset Password
+
+- **URL:** /api/accounts/reset/{uid}/{token}/
+- **Method:** POST
+- **Description:** Reset user password using unique token.
+- **Request Body:**
+```json
+    {
+        "password": "new_password",
+        "password1": "new_password"
+    }
+```
+### Blogs App
+
+#### 1. User Blog API
+ **List User Blogs**
+
+- **URL:** /api/blog/
+- **Method:** GET
+- **Description:** Retrieve a list of user blogs.
+- **Authentication:** Required
+
+ **Create User Blog**
+
+- **URL:** /api/blog/
+- **Method:** POST
+- **Description:** Create a new blog post.
+- **Authentication:** Required
+- **Request Body:**
+``` json
+    {
+        "title": "New Blog",
+        "content": "This is a new blog",
+        "category": 1,
+        "image": <image_file>
+    }
+```
+
+**Retrieve User Blog**
+
+- **URL:** /api/blog/{blog_id}/
+- **Method:** GET
+- **Description:** Retrieve details of a specific user blog.
+- **Authentication:** Required
+
+**Update User Blog**
+
+- **URL:** /api/blog/{blog_id}/
+- **Method:** PUT
+- **Description:** Update an existing user blog.
+- **Authentication:** Required
+- **Request Body:**
+
+```json 
+    {
+        "title": "Updated Blog",
+        "content": "This is an updated blog",
+        "category": 1,
+        "image": <image_file>
+    }
+```
+**Delete User Blog**
+
+- **URL:** /api/blog/{blog_id}/
+- **Method:** DELETE
+- **Description:** Delete a user blog.
+- **Authentication:** Required
+
+#### 2. Public Blog API
+**List Public Blogs**
+
+- **URL:** /api/blog/public/
+- **Method:** GET
+- **Description:** Retrieve a list of public blogs.
+
+**Search by Title**
+
+
+- **URL:** /api/blog/public/?search={title}
+- **Method:** GET
+- **Description:** Search public blogs by title.
+
+**Search by Content**
+
+- **URL:** /api/blog/public/?search={content}
+- **Method:** GET
+- **Description:** Search public blogs by content.
+
+**Search by Category Name**
+
+- **URL:** /api/blog/public/?search={category_name}
+- **Method:** GET
+- **Description:** Search public blogs by category name.
+
+#### 3. Like Action Endpoint
+**Like Blog**
+
+- **URL:** /api/blog/public/{blog_id}/like/
+- **Method:** POST
+- **Description:** Like a public blog.
+- **Authentication:** Required
+
+**Unlike Blog**
+
+- **URL:** /api/blog/public/{blog_id}/like/
+- **Method:** POST
+- **Description:** Unlike a previously liked public blog.
+- **Authentication:** Required
+
+### 4. Comment Action Endpoint
+**Comment on Blog**
+
+- **URL:** /api/blog/public/{blog_id}/comment/
+- **Method:** POST
+- **Description:** Comment on a public blog.
+- **Authentication:** Required
+- **Request Body:**
+
+```json
+    {
+        "content": "Test comment",
+        "blog": {blog_id}
+    }
+```
+### 5. Category Viewset
+**List Categories**
+
+- **URL:** /api/blog/categories/
+- **Method:** GET
+- **Description:** Retrieve a list of blog categories.
+
+**Retrieve Category**
+
+- **URL:** /api/blog/categories/{category_id}/
+- **Method:** GET
+- **Description:** Retrieve details of a specific blog category.
+
+
 ## Tech Stack
 
 - **Django:** Backend framework.
