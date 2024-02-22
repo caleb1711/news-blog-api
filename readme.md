@@ -384,7 +384,7 @@ To run tests for the blog institute Django application, execute the following co
 ```bash
 python manage.py test accounts
 python manage.py test blog
-
+```
 
 
 ## DEPLOYMENT
